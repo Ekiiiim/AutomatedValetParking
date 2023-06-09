@@ -101,11 +101,12 @@ class hybrid_a_star:
         # initial node
         self.initial_node = Node(x=park_map.case.x0,
                                  y=park_map.case.y0,
-                                 index=0,
+                                 index=park_map.convert_position_to_index(park_map.case.x0, park_map.case.y0),
                                  theta=rs_curve.pi_2_pi(park_map.case.theta0))
         # final node
         self.goal_node = Node(x=park_map.case.xf,
                               y=park_map.case.yf,
+                              index=park_map.convert_position_to_index(park_map.case.xf, park_map.case.yf),
                               theta=rs_curve.pi_2_pi(park_map.case.thetaf))
 
         self.open_list.put(self.initial_node)
@@ -167,7 +168,8 @@ class hybrid_a_star:
                 find_opennode = False
                 # find node in the open list
                 for opennode_i in self.open_list.queue:
-                    if opennode_i.x == x_ and opennode_i.y == y_ and opennode_i.theta == theta_:
+                    # if opennode_i.x == x_ and opennode_i.y == y_ and opennode_i.theta == theta_:
+                    if opennode_i.index == self.park_map.convert_position_to_index(x_, y_):
                         child_node = opennode_i
                         find_opennode = True
 
@@ -177,10 +179,12 @@ class hybrid_a_star:
                 child_node = Node(x=x_,
                                   y=y_,
                                   theta=theta_,
-                                  index=self.global_index + i + 1,
+                                  index=self.park_map.convert_position_to_index(x_, y_),
                                   parent_index=current_node.index,
                                   is_forward=is_forward,
                                   steering_angle=steering_angle)
+                # draw on map
+                ploter.plot_child_node(child_node)
                 # collision check
                 for i in range(math.ceil(self.dt / self.ddt)):
                     # discrete trajectory for collision check
@@ -301,6 +305,7 @@ class hybrid_a_star:
         '''
         if node is near the goal node, we check whether the rs curve could reach it
         '''
+        print("Entering try_reach_goal")
         collision = False
         rs_path = None
         in_radius = False
@@ -313,6 +318,8 @@ class hybrid_a_star:
 
         info = {'in_radius': in_radius,
                 'collision_position': collision_p}
+
+        print("Finished: try_reach_goal")
         return rs_path, collision, info
 
     def try_rs_curve(self, current_node: Node):
@@ -352,6 +359,7 @@ class hybrid_a_star:
         node = current_node
         all_path_node = []
         while node.index != 0:
+            print("Error here")
             all_path_node.append(node)
             parent_index = node.parent_index
             for node_i in self.closed_list:

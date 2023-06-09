@@ -4,7 +4,7 @@
   Benchmark_path: BenchmarkCases # case folder name
   trajectory_dt: 0.2 # s discrete the trajectory for collision check
   map_discrete_size: 0.1 # m
-  flag_radius: 18 # m (in this circle area, we use rs curve to connect goal pose)
+  flag_radius: 15 # m (in this circle area, we use rs curve to connect goal pose)
   extended_num: 1 # extend point at the end of orignal path
 
 ## hybrid cost
@@ -20,7 +20,7 @@
 
 ## path optimization
   # expand distance for path optimization
-  expand_dis: 0.8 #m
+  expand_dis: 0.3 #m
   # weight used for path optimization
   smooth_cost: 5
   compact_cost: 3

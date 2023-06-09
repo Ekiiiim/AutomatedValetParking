@@ -14,13 +14,18 @@ Copyright (c) 2022 by wenqing-hnu, All Rights Reserved.
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+from map import costmap
 from map.costmap import Vehicle, Map
+
+import os
 
 class ploter:
 
     @staticmethod
     def plot_obstacles(map:Map, fig_id=None):
+        print("Plotting obstacles")
         plt.ion()
+        plt.show()
         if fig_id == None:
             fig_id = 1
         plt.figure(fig_id)
@@ -39,25 +44,37 @@ class ploter:
         plt.arrow(map.case.x0, map.case.y0, np.cos(map.case.theta0), np.sin(map.case.theta0), width=0.2, color = "gold")
         plt.arrow(map.case.xf, map.case.yf, np.cos(map.case.thetaf), np.sin(map.case.thetaf), width=0.2, color = "gold")
 
-        plt.title("Hybrid A Start Path")
+        ## plot goal
+        plt.plot(np.float64(map.case.xf),np.float64(map.case.yf),'o',color='green')
+
+        plt.title("Hybrid A Star Path")
         plt.xlim(map.boundary[0], map.boundary[1])
         plt.ylim(map.boundary[2], map.boundary[3])
         plt.gca().set_aspect('equal', adjustable = 'box')
         plt.gca().set_axisbelow(True)
         plt.draw()
+        print("Finished plotting")
+
+    # @staticmethod
+    # def plot_init():
+    #     map = costmap.Map(file='/Users/chengminyu/Desktop/NavInfo/AutomatedValetParking/BenchmarkCases/Case7.csv')
+        
 
     @staticmethod
-    def plot_node(nodes, current_node):
-        # plt.ion()
+    def plot_current_node(current_node):
         plt.figure(1)
-
         plt.plot(current_node.x,current_node.y,'o',color='r')
-
-        # create path
-        for i in range(len(nodes)):
-            plt.plot(nodes[i][0], nodes[i][1], 'o', color='grey')
-        
+        print(f"current node: {current_node.index}, father: {current_node.parent_index}")
         plt.draw()
+        plt.pause(0.001)
+
+    @staticmethod
+    def plot_child_node(child_node):
+        plt.figure(1)
+        plt.plot(child_node.x, child_node.y, '.', color='grey')
+        print(f"child node: {child_node.index}, father: {child_node.parent_index}")
+        plt.draw()
+        plt.pause(0.001)
 
     @staticmethod
     def plot_curve(x,y,color='grey',label=None):

@@ -29,16 +29,24 @@ def main(file, config):
     park_map = costmap.Map(
         file=file, discrete_size=config['map_discrete_size'])
 
+    print("Created: park map")
+
     # create vehicle
     ego_vehicle = costmap.Vehicle()
+
+    print("Created: vehicle")
 
     # create path planner
     planner = path_planner.PathPlanner(config=config,
                                        map=park_map,
                                        vehicle=ego_vehicle)
 
+    print("Created: path planner")
+
     # create path optimizer
     path_optimizer = path_optimazition.path_opti(park_map, ego_vehicle, config)
+
+    print("Created: path optimizer")
 
     # create path interpolation
     interplotor = path_interpolation.interpolation(
@@ -48,9 +56,13 @@ def main(file, config):
     v_planner = velocity_planner.VelocityPlanner(vehicle=ego_vehicle,
                                                  velocity_func_type=config['velocity_func_type'])
 
+    print("Created: velocity planner")
+
     # create path optimization planner
     ocp_planner = ocp_optimization.ocp_optimization(
         park_map=park_map, vehicle=ego_vehicle, config=config)
+
+    print("Created: path optimization planner")
 
     # rapare memory to store path
     final_opt_path = []  # store the optimization path
@@ -125,7 +137,7 @@ def main(file, config):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='hybridAstar')
     parser.add_argument("--config_name", type=str, default="config")
-    parser.add_argument("--case_name", type=str, default="Case8")
+    parser.add_argument("--case_name", type=str, default="Case1")
     args = parser.parse_args()
 
     # initial

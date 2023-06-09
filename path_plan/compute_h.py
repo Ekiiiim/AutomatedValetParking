@@ -59,6 +59,10 @@ class Dijkstra:
         initial_grid_y = np.float64(self.final_point[1])
         terminate_grid_x = np.float64(node_x)
         terminate_grid_y = np.float64(node_y)
+
+        # Mike added
+        # print(f"initial_grid_x: {initial_grid_x} _y: {initial_grid_y} terminate_grid_x: {terminate_grid_x} _y: {terminate_grid_y}")
+
         # initialize openlist and closedlist
         initial_grid_id = self.map.convert_position_to_index(initial_grid_x,
                                                              initial_grid_y)
@@ -77,6 +81,8 @@ class Dijkstra:
         next_grid = self.open_list.get()
         if next_grid.grid_id == self.terminate_grid_id:
             self.find_terminate = True
+            print(f"current id: {next_grid.grid_id}; wanted id: self {self.terminate_grid_id}")
+        
         self.closedlist.append(next_grid)
 
         return next_grid

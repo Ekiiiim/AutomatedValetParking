@@ -189,8 +189,11 @@ class Map:
         dy_position = np.linspace(self.boundary[2], self.boundary[3], y_index)
         self._discrete_x = dx_position[1] - dx_position[0]
         self._discrete_y = dy_position[1] - dy_position[0]
+        print(f"discrete_x: {self._discrete_x} discrete_y: {self._discrete_y}")
         # the position of each point in the park map
         self.map_position = (dx_position, dy_position)
+        print(f"self.map_position[0]: {self.map_position[0]}")
+        print(f"self.map_position[0][5]: {self.map_position[0][5]}")
         # create grid index
         self.grid_index_max = x_index*y_index
 
@@ -324,6 +327,6 @@ class Map:
         return: the index of this grid, its range is from 1 to x_index*y_index
         '''
         index_0 = math.floor((grid_x - self.boundary[0]) / self._discrete_x)
-        index_1 = math.floor((self.boundary[3] - grid_y) / self._discrete_y) * (
+        index_1 = math.floor((grid_y - self.boundary[2]) / self._discrete_y) * (
             int((self.boundary[1] - self.boundary[0]) / self._discrete_x))
         return index_0 + index_1
