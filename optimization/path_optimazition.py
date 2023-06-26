@@ -41,12 +41,13 @@ class path_opti:
         points_n = len(self.original_path)
         # compute the path smooth function
         smooth_matrix = np.zeros((2*points_n, 2*points_n))
+        eye_matrix = np.eye(2)
         if points_n > 2:
             for i in range(points_n-2):
                 # create left upper original matrix
                 zero_matrix_1 = np.zeros((2*i, 2*i))
                 # create coffecient matrix
-                eye_matrix = np.eye(2)
+                
                 coffecient_1 = np.hstack(
                     (eye_matrix, -2*eye_matrix, eye_matrix))
                 coffecient_2 = np.hstack(

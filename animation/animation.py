@@ -64,7 +64,7 @@ class ploter:
     def plot_current_node(current_node):
         plt.figure(1)
         plt.plot(current_node.x,current_node.y,'o',color='r')
-        print(f"current node: {current_node.index}, father: {current_node.parent_index}")
+        # print(f"current node: {current_node.index}, father: {current_node.parent_index}")
         plt.draw()
         plt.pause(0.001)
 
@@ -72,7 +72,7 @@ class ploter:
     def plot_child_node(child_node):
         plt.figure(1)
         plt.plot(child_node.x, child_node.y, '.', color='grey')
-        print(f"child node: {child_node.index}, father: {child_node.parent_index}")
+        # print(f"child node: {child_node.index}, father: {child_node.parent_index}")
         plt.draw()
         plt.pause(0.001)
 
@@ -127,7 +127,7 @@ class ploter:
     
     @staticmethod
     def save_gif(path, color='green', show_car=False, save_gif_name=None, map=None):
-        fig = plt.figure(2, dpi=300, figsize=(16,12))
+        fig = plt.figure(2, dpi=200, figsize=(6,4))
         ploter.plot_obstacles(map=map, fig_id=2)
         x,y=[],[]
         v = Vehicle()

@@ -9,3 +9,10 @@
 
 # file 
 过程记录
+
+/BenchmarkCases
+pictures
+/bin
+/lib
+pyvenv.cfg
+/solution

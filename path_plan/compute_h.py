@@ -55,8 +55,10 @@ class Dijkstra:
         # we set final node as the initial grid
         # and our goal is to find the distance(priority)
         # between the current node(terminate node) and the final node.
-        initial_grid_x = np.float64(self.final_point[0])
-        initial_grid_y = np.float64(self.final_point[1])
+        # print(f"final point: ({self.final_point[0]}, {self.final_point[1]})")
+        # print(f"initial_grid_x = {self.final_point[0]} - {(self.final_point[0] - self.map.boundary[0]) % self.map._discrete_x}")
+        initial_grid_x = self.final_point[0] - (self.final_point[0] - self.map.boundary[0]) % self.map._discrete_x
+        initial_grid_y = self.final_point[1] - (self.final_point[1] - self.map.boundary[2]) % self.map._discrete_y
         terminate_grid_x = np.float64(node_x)
         terminate_grid_y = np.float64(node_y)
 
@@ -78,10 +80,13 @@ class Dijkstra:
     def update_closedlist(self):
         # find the minimum distance in the openlist and
         # add it into the closedlist
+        print(self.open_list.empty())
         next_grid = self.open_list.get()
+        print("lalal")
         if next_grid.grid_id == self.terminate_grid_id:
             self.find_terminate = True
-            print(f"current id: {next_grid.grid_id}; wanted id: self {self.terminate_grid_id}")
+            print("found terminate")
+            # print(f"current id: {next_grid.grid_id}; wanted id: self {self.terminate_grid_id}")
         
         self.closedlist.append(next_grid)
 
@@ -90,8 +95,10 @@ class Dijkstra:
     def update_openlist(self, current_grid: Grid = None):
         # compute the near grids info
         for i in range(8):
+            print(i)
             # left upper grid
             if i == 0:
+                # print(f"current grid x: {current_grid.grid_x}  current grid y: {current_grid.grid_y}")
                 grid_x = current_grid.grid_x - self.map._discrete_x
                 grid_y = current_grid.grid_y + self.map._discrete_y
                 # check is obstacle
@@ -213,9 +220,11 @@ class Dijkstra:
         current_grid = self.initial_map(node_x, node_y)
         while not self.find_terminate:
             # expand grid and update openlist
+            print(current_grid)
             self.update_openlist(current_grid)
             # get the next grid
             current_grid = self.update_closedlist()
+            print(f"Hi: {current_grid}")
 
         return current_grid.distance, self.closedlist
 
@@ -243,16 +252,22 @@ class Dijkstra:
     def is_obstacle(self, grid_x, grid_y):
         # check collision
         x_index = math.floor(
-            (grid_x - self.map.boundary[0]) / self.map._discrete_x) - 1
+            (grid_x - self.map.boundary[0]) / self.map._discrete_x)
         y_index = math.floor(
-            (grid_y - self.map.boundary[2]) / self.map._discrete_y) - 1
-        max_x_index = int(
+            (grid_y - self.map.boundary[2]) / self.map._discrete_y)
+        # print(f"{self.map.boundary[0]}, {self.map.boundary[1]}, {self.map.boundary[2]}, {self.map.boundary[3]}")
+        # print(f"max x value: {self.map.boundary[1]}  max x index: {round((self.map.boundary[1] - self.map.boundary[0]) / self.map._discrete_x)}")
+        # print(f"next x value: {grid_x} next x index: {x_index}")
+        # print(f"_discrete_x: {self.map._discrete_x}")
+        # print(f"({self.map.boundary[1]} - {self.map.boundary[0]}) / {self.map._discrete_x} = {round((self.map.boundary[1] - self.map.boundary[0]) / self.map._discrete_x)}")
+        max_x_index = math.ceil(
             (self.map.boundary[1] - self.map.boundary[0]) / self.map._discrete_x)
-        max_y_index = int(
+        max_y_index = math.ceil(
             (self.map.boundary[3] - self.map.boundary[2]) / self.map._discrete_y)
-        if x_index >= max_x_index:
+        # print(max_x_index)
+        if x_index == max_x_index:
             x_index = max_x_index - 1
-        if y_index >= max_y_index:
+        if y_index == max_y_index:
             y_index = max_y_index - 1
         is_obstacle = False
         if int(self.map.cost_map[x_index][y_index]) == 255:

@@ -615,13 +615,15 @@ class ocp_optimization:
             model.variables[variable_n-6]) == final_pose_cos)
 
         # solution
-        model.variables.pprint()
-        model.obj1.pprint()
+        ## Mike commented
+        # model.variables.pprint()
+        # model.obj1.pprint()
+        #################
         # solver = pyo.SolverFactory(
         # 'ipopt', executable=solver_path)  # 指定 ipopt 作为求解器
         solver = pyo.SolverFactory('ipopt')
         solver.options['max_iter'] == 1000
-        solution = solver.solve(model)
+        solution = solver.solve(model, tee=True)
         solution.write()
 
         optimal_tf = pyo.value(model.variables[variable_n-1])

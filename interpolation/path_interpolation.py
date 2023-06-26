@@ -56,6 +56,7 @@ class interpolation:
             self.insert_num = 50
         t = 0
         preivous_t = 0
+        rest_x = 0 # added by Mike
         insert_path = []
         cubic_func_list = path_i_info['cubic_list']
         rotation_matrix_list = path_i_info['rotation_matrix_list']
@@ -176,6 +177,13 @@ class interpolation:
                 insert_path[i].insert(5, steering_angle)
                 delta_steering_angle = insert_path[i][5] - insert_path[i-1][5]
                 delta_time = insert_path[i][-1] - insert_path[i-1][-1]
+                # added by Mike
+                # j = i
+                # while delta_time==0 and j>1:
+                #     j -= 1
+                #     delta_time = insert_path[j][-1] - insert_path[j-1][-1]
+                
+                # print(delta_time)
                 omega = delta_steering_angle / delta_time
                 insert_path[i-1].insert(6, omega)
 

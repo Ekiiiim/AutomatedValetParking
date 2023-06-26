@@ -44,6 +44,10 @@ class PathPlanner:
 
     def path_planning(self) -> Tuple[List[List], Dict, List[List[List]]]:
         final_path, astar_path, rs_path = self.a_star_plan()
+        ## if didn't find path ##
+        if final_path == None:
+            return None, None, None
+        #########################
         split_path_list, change_gear = self.split_path(final_path)
 
         path_info = {'astar_path': astar_path,
@@ -86,6 +90,7 @@ class PathPlanner:
                     collision_p[0], collision_p[1], collision_p[2], self.map)
 
             if not collision and info['in_radius']:
+                print("In radius!")
                 reach_goal = True
                 break
 
@@ -93,6 +98,7 @@ class PathPlanner:
                 # expand node
                 ploter.plot_current_node(current_node)
                 child_group = astar.expand_node(current_node)
+                # print("Done expanding")
                 path = []
                 for i in child_group.queue:
                     x = i.x
@@ -100,9 +106,18 @@ class PathPlanner:
                     theta = i.theta
                     path.append([x, y, theta])
 
-        print("Found path!")
-
         a_star_path = astar.finish_path(current_node)
+
+        # added by Mike
+        if astar.open_list.empty() and not reach_goal:
+            if rs_path == None:
+                print("Failed to reach goal by rs curve")
+            else:
+                print("Failed to reach goal because of collision")
+            return None, a_star_path, rs_path
+        
+        print("Found path!")
+        
         final_path = copy.deepcopy(a_star_path)
         # final_path = a_star_path + rs_path
         # assemble all path

@@ -179,23 +179,21 @@ class Map:
         '''
         param: case data is obtained from the csv file
         '''
-        x_index = int(
+        x_size = int(
             (self.boundary[1] - self.boundary[0]) / self.discrete_size)
-        y_index = int(
+        y_size = int(
             (self.boundary[3] - self.boundary[2]) / self.discrete_size)
-        self.cost_map = np.zeros((x_index, y_index), dtype=np.float64)
+        self.cost_map = np.zeros((x_size, y_size), dtype=np.float64)
         # create (x,y) position
-        dx_position = np.linspace(self.boundary[0], self.boundary[1], x_index)
-        dy_position = np.linspace(self.boundary[2], self.boundary[3], y_index)
+        dx_position = np.linspace(self.boundary[0], self.boundary[1], x_size)
+        dy_position = np.linspace(self.boundary[2], self.boundary[3], y_size)
         self._discrete_x = dx_position[1] - dx_position[0]
         self._discrete_y = dy_position[1] - dy_position[0]
-        print(f"discrete_x: {self._discrete_x} discrete_y: {self._discrete_y}")
+        # print(f"discrete_x: {self._discrete_x} discrete_y: {self._discrete_y}")
         # the position of each point in the park map
         self.map_position = (dx_position, dy_position)
         print(f"self.map_position[0]: {self.map_position[0]}")
         print(f"self.map_position[0][5]: {self.map_position[0][5]}")
-        # create grid index
-        self.grid_index_max = x_index*y_index
 
     def detect_obstacle_edge(self):
         # just consider the boundary of the obstacles
@@ -326,6 +324,11 @@ class Map:
         param: the upper right corner of the grid position
         return: the index of this grid, its range is from 1 to x_index*y_index
         '''
+        if grid_x >= self.boundary[1]:
+            grid_x = self.boundary[1] - 0.1 * self._discrete_x
+        if grid_y >= self.boundary[3]:
+            grid_y = self.boundary[3] - 0.1 * self._discrete_y
+        
         index_0 = math.floor((grid_x - self.boundary[0]) / self._discrete_x)
         index_1 = math.floor((grid_y - self.boundary[2]) / self._discrete_y) * (
             int((self.boundary[1] - self.boundary[0]) / self._discrete_x))

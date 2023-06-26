@@ -104,6 +104,7 @@ def calc_optimal_path(sx, sy, syaw, gx, gy, gyaw, maxc, step_size=STEP_SIZE):
     mini = 0
 
     for i in range(len(paths)):
+        # print(f"{i} in {len(paths)}")
         if paths[i].L <= minL:
             minL, mini = paths[i].L, i
 

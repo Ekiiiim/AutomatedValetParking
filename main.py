@@ -74,6 +74,18 @@ def main(file, config):
     t = 0
     optimal_time_info = []
     original_path, path_info, split_path = planner.path_planning()
+    # added by Mike
+    if original_path == None:
+        print("Failed to find a path")
+        fig_name = args.case_name + '.png'
+        fig_path = config['pic_path']
+        if not os.path.exists(fig_path):
+            os.makedirs(fig_path)
+        save_fig = os.path.join(fig_path, fig_name)
+        plt.savefig(save_fig, dpi=600)
+        plt.close()
+        return
+
     for path_i in split_path:
         # optimize path
         opti_path, forward = path_optimizer.get_result(path_i)

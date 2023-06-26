@@ -74,6 +74,8 @@ class hybrid_a_star:
                  park_map: Map,
                  vehicle: Vehicle) -> None:
 
+        print("here")
+
         # create vehicle
         self.vehicle = vehicle
 
@@ -89,6 +91,8 @@ class hybrid_a_star:
         self.heuristic = Dijkstra(park_map)
         _, self.h_value_list = self.heuristic.compute_path(
             node_x=park_map.case.x0, node_y=park_map.case.y0)
+
+        print("computed path")
 
         # default settings
         self.global_index = 0
@@ -124,6 +128,8 @@ class hybrid_a_star:
             self.collision_checker = collision_check.distance_checker(
                 vehicle=self.vehicle, map=self.park_map, config=config)
 
+        print("now here")
+
     def expand_node(self,
                     current_node: Node) -> queue.PriorityQueue:
         # caculate <x,y,theta> of the next node
@@ -154,7 +160,8 @@ class hybrid_a_star:
             # if the node is in closedlist or this node beyond the boundary, continue
             find_closednode = False
             for closednode_i in self.closed_list:
-                if closednode_i.x == x_ and closednode_i.y == y_ and closednode_i.theta == theta_:
+                if closednode_i.index == self.park_map.convert_position_to_index(x_, y_) and abs(closednode_i.theta - theta_) == 0:
+                    # print(abs(closednode_i.theta - theta_))
                     find_closednode = True
                     break
                 # if beyond the boundary
@@ -169,7 +176,8 @@ class hybrid_a_star:
                 # find node in the open list
                 for opennode_i in self.open_list.queue:
                     # if opennode_i.x == x_ and opennode_i.y == y_ and opennode_i.theta == theta_:
-                    if opennode_i.index == self.park_map.convert_position_to_index(x_, y_):
+                    if opennode_i.index == self.park_map.convert_position_to_index(x_, y_) and abs(opennode_i.theta - theta_) == 0:
+                        # print(abs(opennode_i.theta - theta_))
                         child_node = opennode_i
                         find_opennode = True
 
@@ -211,8 +219,10 @@ class hybrid_a_star:
                     # caculate cost
                     child_node.g = self.calc_node_cost(
                         child_node, father_theta=current_node.theta, father_gear=current_node.forward)
+                    # print(f"cost: {child_node.g}")
                 # caculate heuristic
                     child_node.h = self.calc_node_heuristic(child_node)
+                    # print(f"heuristic: {child_node.h}")
                 # caculate f value
                     child_node.f = child_node.g + child_node.h
                 # add this node into openlist
@@ -253,6 +263,7 @@ class hybrid_a_star:
         cost = 0
         cost_gear = 0
         gear = node.forward
+        # print(f"gear: {gear}; father_gear: {father_gear}")
         if gear != father_gear:
             cost_gear = self.config['cost_gear']
 
@@ -281,8 +292,10 @@ class hybrid_a_star:
             if find_id:
                 find_grid = True
                 h_value_1 = self.h_value_list[i].distance
+                # print(f"wanted id: {_grid_id}; self.h_value_list[i].grid_id: {self.h_value_list[i].grid_id}")
                 break
         if find_grid == False:
+            # print("didn't find grid")
             h_value_1, self.h_value_list = self.heuristic.compute_path(
                 node_x=current_node.x, node_y=current_node.y)
 
@@ -297,6 +310,7 @@ class hybrid_a_star:
 
         h_value_2 = rs_path.L
         h_value_1 = h_value_1 / 100
+        print(f"h_value_2: {h_value_2}  h_value_1: {h_value_1}")
         h_value = max(h_value_1, h_value_2)
 
         return h_value
@@ -305,7 +319,7 @@ class hybrid_a_star:
         '''
         if node is near the goal node, we check whether the rs curve could reach it
         '''
-        print("Entering try_reach_goal")
+        # print("Entering try_reach_goal")
         collision = False
         rs_path = None
         in_radius = False
@@ -319,7 +333,7 @@ class hybrid_a_star:
         info = {'in_radius': in_radius,
                 'collision_position': collision_p}
 
-        print("Finished: try_reach_goal")
+        # print("Finished: try_reach_goal")
         return rs_path, collision, info
 
     def try_rs_curve(self, current_node: Node):
@@ -327,6 +341,7 @@ class hybrid_a_star:
         generate rs curve and collision check
         return: rs_path is a class and collision is true or false
         '''
+        # print("trying rs curve")
         collision = False
         # generate max curvature based on min turn radius
         max_c = 1 / self.vehicle.min_radius_turn
@@ -358,8 +373,8 @@ class hybrid_a_star:
     def finish_path(self, current_node: Node):
         node = current_node
         all_path_node = []
-        while node.index != 0:
-            print("Error here")
+        while node.index != self.initial_node.index:
+            print("Finishing path")
             all_path_node.append(node)
             parent_index = node.parent_index
             for node_i in self.closed_list:
