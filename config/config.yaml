@@ -3,7 +3,7 @@
   dt: 0.6 # s used for compute trajectory distance while expanding nodes
   Benchmark_path: BenchmarkCases # case folder name
   trajectory_dt: 0.2 # s discrete the trajectory for collision check
-  map_discrete_size: 0.1 # m
+  map_discrete_size: 0.2 # m
   flag_radius: 15 # m (in this circle area, we use rs curve to connect goal pose)
   extended_num: 1 # extend point at the end of orignal path
 

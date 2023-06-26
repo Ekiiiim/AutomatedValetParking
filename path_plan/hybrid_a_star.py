@@ -74,8 +74,6 @@ class hybrid_a_star:
                  park_map: Map,
                  vehicle: Vehicle) -> None:
 
-        print("here")
-
         # create vehicle
         self.vehicle = vehicle
 
@@ -127,8 +125,6 @@ class hybrid_a_star:
         else:
             self.collision_checker = collision_check.distance_checker(
                 vehicle=self.vehicle, map=self.park_map, config=config)
-
-        print("now here")
 
     def expand_node(self,
                     current_node: Node) -> queue.PriorityQueue:

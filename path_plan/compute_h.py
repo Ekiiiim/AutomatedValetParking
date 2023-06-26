@@ -57,8 +57,10 @@ class Dijkstra:
         # between the current node(terminate node) and the final node.
         # print(f"final point: ({self.final_point[0]}, {self.final_point[1]})")
         # print(f"initial_grid_x = {self.final_point[0]} - {(self.final_point[0] - self.map.boundary[0]) % self.map._discrete_x}")
-        initial_grid_x = self.final_point[0] - (self.final_point[0] - self.map.boundary[0]) % self.map._discrete_x
-        initial_grid_y = self.final_point[1] - (self.final_point[1] - self.map.boundary[2]) % self.map._discrete_y
+        initial_grid_x = np.float64(self.final_point[0])
+        initial_grid_y = np.float64(self.final_point[1])
+        # initial_grid_x = self.final_point[0] - (self.final_point[0] - self.map.boundary[0]) % self.map._discrete_x
+        # initial_grid_y = self.final_point[1] - (self.final_point[1] - self.map.boundary[2]) % self.map._discrete_y
         terminate_grid_x = np.float64(node_x)
         terminate_grid_y = np.float64(node_y)
 
@@ -80,13 +82,11 @@ class Dijkstra:
     def update_closedlist(self):
         # find the minimum distance in the openlist and
         # add it into the closedlist
-        print(self.open_list.empty())
+        # print(self.open_list.empty())
         next_grid = self.open_list.get()
-        print("lalal")
         if next_grid.grid_id == self.terminate_grid_id:
             self.find_terminate = True
             print("found terminate")
-            # print(f"current id: {next_grid.grid_id}; wanted id: self {self.terminate_grid_id}")
         
         self.closedlist.append(next_grid)
 
@@ -95,7 +95,6 @@ class Dijkstra:
     def update_openlist(self, current_grid: Grid = None):
         # compute the near grids info
         for i in range(8):
-            print(i)
             # left upper grid
             if i == 0:
                 # print(f"current grid x: {current_grid.grid_x}  current grid y: {current_grid.grid_y}")
@@ -220,11 +219,9 @@ class Dijkstra:
         current_grid = self.initial_map(node_x, node_y)
         while not self.find_terminate:
             # expand grid and update openlist
-            print(current_grid)
             self.update_openlist(current_grid)
             # get the next grid
             current_grid = self.update_closedlist()
-            print(f"Hi: {current_grid}")
 
         return current_grid.distance, self.closedlist
 
