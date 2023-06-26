@@ -192,8 +192,8 @@ class Map:
         # print(f"discrete_x: {self._discrete_x} discrete_y: {self._discrete_y}")
         # the position of each point in the park map
         self.map_position = (dx_position, dy_position)
-        print(f"self.map_position[0]: {self.map_position[0]}")
-        print(f"self.map_position[0][5]: {self.map_position[0][5]}")
+        # print(f"self.map_position[0]: {self.map_position[0]}")
+        # print(f"self.map_position[0][5]: {self.map_position[0][5]}")
 
     def detect_obstacle_edge(self):
         # just consider the boundary of the obstacles

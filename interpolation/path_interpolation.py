@@ -79,8 +79,9 @@ class interpolation:
             while True:
                 preivous_t = t
                 t += dt
-                if t > terminate_t:
-                    t = terminate_t
+                # if t > terminate_t:
+                #     print(f"preivous_t: {preivous_t} t: {t}")
+                #     t = terminate_t
                 t_x = np.linspace(preivous_t, t, 100)
                 y = []
                 for x_i in t_x:
@@ -177,6 +178,8 @@ class interpolation:
                 insert_path[i].insert(5, steering_angle)
                 delta_steering_angle = insert_path[i][5] - insert_path[i-1][5]
                 delta_time = insert_path[i][-1] - insert_path[i-1][-1]
+                if delta_time == 0:
+                    print(f"insert_path[i][-1]: {insert_path[i][-1]} insert_path[i-1][-1]: {insert_path[i-1][-1]}")
                 # added by Mike
                 # j = i
                 # while delta_time==0 and j>1:

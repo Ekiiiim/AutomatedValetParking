@@ -41,7 +41,6 @@ class path_opti:
         points_n = len(self.original_path)
         # compute the path smooth function
         smooth_matrix = np.zeros((2*points_n, 2*points_n))
-        eye_matrix = np.eye(2)
         if points_n > 2:
             for i in range(points_n-2):
                 # create left upper original matrix
@@ -70,6 +69,7 @@ class path_opti:
         # compute the path compaction function
         compaction_matrix = np.zeros((2*points_n, 2*points_n))
         for i in range(points_n-1):
+            eye_matrix = np.eye(2)
             zero_matrix_1 = np.zeros((2*i, 2*i))
             coffecient_1 = np.hstack((eye_matrix, -eye_matrix))
             coffecient_2 = np.hstack((-eye_matrix, eye_matrix))

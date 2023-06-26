@@ -81,7 +81,7 @@ class sin_func(velocity_func_base):
         elif t >= self.t0 and t < (self.t0 + self.t1):
             v = self.a
             acc = 0
-        elif t >= (self.t0 + self.t1) and t <= self.tf:
+        elif t >= (self.t0 + self.t1):
             v = self.a * np.sin(self.w * (t-self.t1))
             acc = self.a * self.w * np.cos(self.w * (t-self.t1))
 

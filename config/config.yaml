@@ -10,7 +10,7 @@
 ## hybrid cost
   cost_gear: 1
   cost_heading_change: 0.5
-  cost_scale: 10
+  cost_scale: 3
 
 ## collision check
   safe_side_dis: 0.1 # m
