@@ -198,9 +198,9 @@ class PathPlanner:
 
         # add final episode path
         input_path = final_path[start:]
-        pre_path = split_path[-1]
 
         if have_extended_points > 0:
+            pre_path = split_path[-1]
             for j in range(have_extended_points):
                 x_j = pre_path[-(have_extended_points-j)][0]
                 y_j = pre_path[-(have_extended_points-j)][1]
