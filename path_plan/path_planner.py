@@ -77,8 +77,9 @@ class PathPlanner:
             # show info
             print('---------------')
             print('current node index:', current_node.index)
-            print('distance:', np.sqrt((current_node.x-self.map.case.xf)
-                                       ** 2 + (current_node.y - self.map.case.yf)**2))
+            # print('distance:', np.sqrt((current_node.x-self.map.case.xf)
+            #                            ** 2 + (current_node.y - self.map.case.yf)**2))
+            print('f value:', current_node.f)
             print('---------------')
 
             rs_path, collision, info = astar.try_reach_goal(current_node)
