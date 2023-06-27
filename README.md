@@ -1,6 +1,7 @@
 # Automated Valet Parking
 ## 1. Introduction
-The goal of this repo is to document my progress in this project.
+The purpose of this repo is to document my progress in this project.
+
 This repo is developed based on [Wenqing's project](https://github.com/wenqing-2021/AutomatedValetParking). This readme only documents major changes made based on the original project. So for more details (system requirement, data structure, etc.) about this project, please visit the original project's page.
 
 ## 2. Usage
@@ -11,14 +12,14 @@ pip install -r requirements.txt
 conda install -c conda-forge ipopt
 ```
 ---
-Run *draw.py* to draw the **map** of a certain case (default Case1)
+Run *draw.py* to only draw the **map** of a certain case (default Case1)
 ```
 python draw.py [--case_name=Case1]
 ```
 Replace `Case1` with the benchmark case you want to draw.
 
 ---
-Run *main.py* to show the **animation** process
+Run *main.py* to show both the map and the **animation** process
 ```
 python main.py [--case_name=Case1]
 ```
@@ -71,5 +72,12 @@ Case 27 Collision | Case 30 Collision
 ![case27_png](pictures/Case27.png "Case 27 Collision") | ![case30_png](pictures/Case30.png "Case 30 Collision")
 The car isn't able to enter/exit the parking slot, since it's already considered as "collided" by only standing in the parking slot. | When the car tries to move in any direction, a collision occurs.
 
-### 3.4 Future Improvement
+This problem could be solved by reducing the `map_discrete_size` in `config.yaml` to create a more accurate grid map. However, this would lead to a much larger amount of calculation.
 
+### 3.4 Future Improvement
+The current program sometimes generates unnatural turbulences in the planned paths:
+Case 14 | Case 18
+:-----------------:|:-----------------:
+![case14_gif](pictures/Case14.gif "Case 14") | ![case18_gif](pictures/Case18.gif "Case 18")
+
+I am looking into the `path_plan` folder to try to find a solution.
