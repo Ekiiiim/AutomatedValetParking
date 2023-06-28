@@ -34,6 +34,7 @@ class Node:
 
     def __init__(self,
                  index: np.int32 = None,
+                 grid_index: np.int32 = None,
                  x: np.float64 = 0.0,
                  y: np.float64 = 0.0,
                  theta: np.float64 = 0.0,
@@ -45,6 +46,7 @@ class Node:
                  steering_angle: np.float64 = None) -> None:
 
         self.index = index
+        self.grid_index = grid_index
         self.x = x
         self.y = y
         self.theta = theta
@@ -90,8 +92,6 @@ class hybrid_a_star:
         _, self.h_value_list = self.heuristic.compute_path(
             node_x=park_map.case.x0, node_y=park_map.case.y0)
 
-        print("computed path")
-
         # default settings
         self.global_index = 0
         self.config = config
@@ -103,13 +103,17 @@ class hybrid_a_star:
         # initial node
         self.initial_node = Node(x=park_map.case.x0,
                                  y=park_map.case.y0,
-                                 index=park_map.convert_position_to_index(park_map.case.x0, park_map.case.y0),
+                                 index=0,
+                                 grid_index=park_map.convert_position_to_index(park_map.case.x0, park_map.case.y0),
                                  theta=rs_curve.pi_2_pi(park_map.case.theta0))
         # final node
         self.goal_node = Node(x=park_map.case.xf,
                               y=park_map.case.yf,
-                              index=park_map.convert_position_to_index(park_map.case.xf, park_map.case.yf),
+                              grid_index=park_map.convert_position_to_index(park_map.case.xf, park_map.case.yf),
                               theta=rs_curve.pi_2_pi(park_map.case.thetaf))
+
+        # TODO: create goal_node_list (nodes that are N steps from goal_node)
+        # self.goal_node_list = self.create_goal_node_list(N)
 
         self.open_list.put(self.initial_node)
         self.initial_node.in_open = True
@@ -156,7 +160,7 @@ class hybrid_a_star:
             # if the node is in closedlist or this node beyond the boundary, continue
             find_closednode = False
             for closednode_i in self.closed_list:
-                if closednode_i.index == self.park_map.convert_position_to_index(x_, y_) and abs(closednode_i.theta - theta_) == 0:
+                if closednode_i.grid_index == self.park_map.convert_position_to_index(x_, y_) and abs(closednode_i.theta - theta_) == 0:
                     # print(abs(closednode_i.theta - theta_))
                     find_closednode = True
                     break
@@ -172,7 +176,7 @@ class hybrid_a_star:
                 # find node in the open list
                 for opennode_i in self.open_list.queue:
                     # if opennode_i.x == x_ and opennode_i.y == y_ and opennode_i.theta == theta_:
-                    if opennode_i.index == self.park_map.convert_position_to_index(x_, y_) and abs(opennode_i.theta - theta_) == 0:
+                    if opennode_i.grid_index == self.park_map.convert_position_to_index(x_, y_) and abs(opennode_i.theta - theta_) == 0:
                         # print(abs(opennode_i.theta - theta_))
                         child_node = opennode_i
                         find_opennode = True
@@ -183,7 +187,8 @@ class hybrid_a_star:
                 child_node = Node(x=x_,
                                   y=y_,
                                   theta=theta_,
-                                  index=self.park_map.convert_position_to_index(x_, y_),
+                                  index=self.global_index + i + 1,
+                                  grid_index=self.park_map.convert_position_to_index(x_, y_),
                                   parent_index=current_node.index,
                                   is_forward=is_forward,
                                   steering_angle=steering_angle)
@@ -337,17 +342,18 @@ class hybrid_a_star:
         generate rs curve and collision check
         return: rs_path is a class and collision is true or false
         '''
+        # TODO: for goal_node in self.goald_node_list:
         # print("trying rs curve")
         collision = False
         # generate max curvature based on min turn radius
         max_c = 1 / self.vehicle.min_radius_turn
         rs_path = rs_curve.calc_optimal_path(sx=current_node.x,
-                                             sy=current_node.y,
-                                             syaw=current_node.theta,
-                                             gx=self.goal_node.x,
-                                             gy=self.goal_node.y,
-                                             gyaw=self.goal_node.theta,
-                                             maxc=max_c)
+                                            sy=current_node.y,
+                                            syaw=current_node.theta,
+                                            gx=self.goal_node.x,
+                                            gy=self.goal_node.y,
+                                            gyaw=self.goal_node.theta,
+                                            maxc=max_c)
 
         # collision check
         for i in range(len(rs_path.x)):
@@ -363,6 +369,12 @@ class hybrid_a_star:
                 break
             else:
                 collision_position = None
+        # TODO: if no collision, return current path
+        # if collision_position == None:
+        #     current_node = goal_node
+        #     while current_node != self.goal_node:
+        #         # iterate to the goal node and add all nodes to rs_path
+        #     break
 
         return rs_path, collision, collision_position
 

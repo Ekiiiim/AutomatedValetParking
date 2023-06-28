@@ -64,7 +64,7 @@ def main(file, config):
 
     print("Created: path optimization planner")
 
-    # rapare memory to store path
+    # prepare memory to store path
     final_opt_path = []  # store the optimization path
     final_insert_path = []  # store the interpolation path
     final_ocp_path = []  # store ocp path
