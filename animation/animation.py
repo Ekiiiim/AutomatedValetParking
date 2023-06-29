@@ -59,6 +59,12 @@ class ploter:
     # def plot_init():
     #     map = costmap.Map(file='/Users/chengminyu/Desktop/NavInfo/AutomatedValetParking/BenchmarkCases/Case7.csv')
         
+    @staticmethod
+    def plot_goal_node(goal_node):
+        plt.figure(1)
+        plt.plot(goal_node.x,goal_node.y,'o',color='g')
+        plt.draw()
+        plt.pause(0.001)
 
     @staticmethod
     def plot_current_node(current_node):

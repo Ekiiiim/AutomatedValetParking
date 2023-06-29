@@ -69,7 +69,7 @@ class PathPlanner:
 
         reach_goal = False
 
-        ploter.plot_obstacles(self.map)
+        # ploter.plot_obstacles(self.map)
 
         while not astar.open_list.empty() and not reach_goal:
             # get current node
@@ -99,13 +99,12 @@ class PathPlanner:
                 # expand node
                 ploter.plot_current_node(current_node)
                 child_group = astar.expand_node(current_node)
-                # print("Done expanding")
-                path = []
-                for i in child_group.queue:
-                    x = i.x
-                    y = i.y
-                    theta = i.theta
-                    path.append([x, y, theta])
+                # path = []
+                # for i in child_group.queue:
+                #     x = i.x
+                #     y = i.y
+                #     theta = i.theta
+                #     path.append([x, y, theta])
 
         a_star_path = astar.finish_path(current_node)
 

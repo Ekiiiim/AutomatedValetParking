@@ -112,12 +112,6 @@ class hybrid_a_star:
                               grid_index=park_map.convert_position_to_index(park_map.case.xf, park_map.case.yf),
                               theta=rs_curve.pi_2_pi(park_map.case.thetaf))
 
-        # TODO: create goal_node_list (nodes that are N steps from goal_node)
-        # self.goal_node_list = self.create_goal_node_list(N)
-
-        self.open_list.put(self.initial_node)
-        self.initial_node.in_open = True
-
         # max delta heading
         self.max_delta_heading = self.vehicle.max_v * \
             np.tan(self.vehicle.max_steering_angle) / self.vehicle.lw * self.dt
@@ -129,6 +123,26 @@ class hybrid_a_star:
         else:
             self.collision_checker = collision_check.distance_checker(
                 vehicle=self.vehicle, map=self.park_map, config=config)
+        
+        # TODO: create goal_node_list (nodes that are N steps from goal_node)
+        self.open_list.put(self.goal_node)
+        self.goal_node_list = self.create_goal_node_list(config['goal_list_size'])
+        self.open_list.queue.clear()
+        assert self.open_list.empty()
+
+        self.open_list.put(self.initial_node)
+        self.initial_node.in_open = True
+
+    def create_goal_node_list(self, step_num):
+        ploter.plot_obstacles(self.park_map)
+        goal_node_list = []
+        for i in range(step_num):
+            current_node = self.open_list.get()
+            goal_node_list.append(current_node)
+            ploter.plot_goal_node(current_node)
+            child_group = self.expand_node(current_node)
+        return goal_node_list
+
 
     def expand_node(self,
                     current_node: Node) -> queue.PriorityQueue:
@@ -311,7 +325,7 @@ class hybrid_a_star:
 
         h_value_2 = rs_path.L
         h_value_1 = h_value_1 / 100
-        print(f"h_value_2: {h_value_2}  h_value_1: {h_value_1}")
+        # print(f"h_value_2: {h_value_2}  h_value_1: {h_value_1}")
         h_value = max(h_value_1, h_value_2)
 
         return h_value
@@ -342,39 +356,49 @@ class hybrid_a_star:
         generate rs curve and collision check
         return: rs_path is a class and collision is true or false
         '''
-        # TODO: for goal_node in self.goald_node_list:
-        # print("trying rs curve")
-        collision = False
-        # generate max curvature based on min turn radius
-        max_c = 1 / self.vehicle.min_radius_turn
-        rs_path = rs_curve.calc_optimal_path(sx=current_node.x,
-                                            sy=current_node.y,
-                                            syaw=current_node.theta,
-                                            gx=self.goal_node.x,
-                                            gy=self.goal_node.y,
-                                            gyaw=self.goal_node.theta,
-                                            maxc=max_c)
+        for goal_node in self.goal_node_list:
+            # print(f"trying rs curve for reaching ({goal_node.x}, {goal_node.y})")
+            collision = False
+            # generate max curvature based on min turn radius
+            max_c = 1 / self.vehicle.min_radius_turn
+            rs_path = rs_curve.calc_optimal_path(sx=current_node.x,
+                                                sy=current_node.y,
+                                                syaw=current_node.theta,
+                                                gx=self.goal_node.x,
+                                                gy=self.goal_node.y,
+                                                gyaw=self.goal_node.theta,
+                                                maxc=max_c)
 
-        # collision check
-        for i in range(len(rs_path.x)):
-            path_x = rs_path.x[i]
-            path_y = rs_path.y[i]
-            path_theta = rs_path.yaw[i]
-            path_theta = rs_curve.pi_2_pi(path_theta)
-            collision = self.collision_checker.check(
-                node_x=path_x, node_y=path_y, theta=path_theta)
+            # collision check
+            for i in range(len(rs_path.x)):
+                path_x = rs_path.x[i]
+                path_y = rs_path.y[i]
+                path_theta = rs_path.yaw[i]
+                path_theta = rs_curve.pi_2_pi(path_theta)
+                collision = self.collision_checker.check(
+                    node_x=path_x, node_y=path_y, theta=path_theta)
 
-            if collision:
-                collision_position = [path_x, path_y, path_theta]
+                if collision:
+                    collision_position = [path_x, path_y, path_theta]
+                    break
+                else:
+                    collision_position = None
+            # TODO: if no collision, return current path
+            if collision_position == None:
+                node = goal_node
+                while node.index != self.goal_node.index:
+                    rs_path.x.append(node.x)
+                    rs_path.y.append(node.y)
+                    rs_path.yaw.append(node.theta)
+                    parent_index = node.parent_index
+                    for node_i in self.closed_list:
+                        if node_i.index == parent_index:
+                            node = node_i
+                            break
+                rs_path.x.append(node.x)
+                rs_path.y.append(node.y)
+                rs_path.yaw.append(node.theta)
                 break
-            else:
-                collision_position = None
-        # TODO: if no collision, return current path
-        # if collision_position == None:
-        #     current_node = goal_node
-        #     while current_node != self.goal_node:
-        #         # iterate to the goal node and add all nodes to rs_path
-        #     break
 
         return rs_path, collision, collision_position
 
@@ -382,7 +406,6 @@ class hybrid_a_star:
         node = current_node
         all_path_node = []
         while node.index != self.initial_node.index:
-            print("Finishing path")
             all_path_node.append(node)
             parent_index = node.parent_index
             for node_i in self.closed_list:

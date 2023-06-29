@@ -6,6 +6,7 @@
   map_discrete_size: 0.2 # m
   flag_radius: 15 # m (in this circle area, we use rs curve to connect goal pose)
   extended_num: 1 # extend point at the end of orignal path
+  goal_list_size: 5
 
 ## hybrid cost
   cost_gear: 1
