@@ -137,15 +137,18 @@ class hybrid_a_star:
         ploter.plot_obstacles(self.park_map)
         goal_node_list = []
         for i in range(step_num):
+            if self.open_list.empty():
+                break
             current_node = self.open_list.get()
             goal_node_list.append(current_node)
             ploter.plot_goal_node(current_node)
-            child_group = self.expand_node(current_node)
+            child_group = self.expand_node(current_node, True)
         return goal_node_list
 
 
     def expand_node(self,
-                    current_node: Node) -> queue.PriorityQueue:
+                    current_node: Node,
+                    finding_goal_list=False) -> queue.PriorityQueue:
         # caculate <x,y,theta> of the next node
         # next_index = 9 or 10(the first expansion)
         child_group = queue.PriorityQueue()
@@ -236,7 +239,7 @@ class hybrid_a_star:
                         child_node, father_theta=current_node.theta, father_gear=current_node.forward)
                     # print(f"cost: {child_node.g}")
                 # caculate heuristic
-                    child_node.h = self.calc_node_heuristic(child_node)
+                    child_node.h = self.calc_node_heuristic(child_node, finding_goal_list)
                     # print(f"heuristic: {child_node.h}")
                 # caculate f value
                     child_node.f = child_node.g + child_node.h
@@ -246,7 +249,7 @@ class hybrid_a_star:
 
             # if this node has been explored
             else:
-                new_h = self.calc_node_heuristic(child_node)
+                new_h = self.calc_node_heuristic(child_node, finding_goal_list)
                 new_g = self.calc_node_cost(
                     child_node, father_theta=current_node.theta, father_gear=current_node.forward)
                 new_f = new_h + new_g
@@ -288,7 +291,7 @@ class hybrid_a_star:
 
         return self.config['cost_scale'] * cost
 
-    def calc_node_heuristic(self, current_node: Node) -> np.float64:
+    def calc_node_heuristic(self, current_node: Node, finding_goal_list=False) -> np.float64:
         '''
         We use Dijkstra algorithm and RS curve length to calculate the heuristic value 
         '''
@@ -315,18 +318,33 @@ class hybrid_a_star:
                 node_x=current_node.x, node_y=current_node.y)
 
         max_c = 1 / self.vehicle.min_radius_turn
-        rs_path = rs_curve.calc_optimal_path(sx=current_node.x,
-                                             sy=current_node.y,
-                                             syaw=current_node.theta,
-                                             gx=self.goal_node.x,
-                                             gy=self.goal_node.y,
-                                             gyaw=self.goal_node.theta,
-                                             maxc=max_c)
-
-        h_value_2 = rs_path.L
+        min_L = -1
+        if not finding_goal_list:
+            for goal_node in self.goal_node_list:
+                rs_path = rs_curve.calc_optimal_path(sx=current_node.x,
+                                                    sy=current_node.y,
+                                                    syaw=current_node.theta,
+                                                    gx=goal_node.x,
+                                                    gy=goal_node.y,
+                                                    gyaw=goal_node.theta,
+                                                    maxc=max_c)
+                if min_L < 0 or rs_path.L < min_L:
+                    min_L = rs_path.L
+        else:
+            rs_path = rs_curve.calc_optimal_path(sx=current_node.x,
+                                                sy=current_node.y,
+                                                syaw=current_node.theta,
+                                                gx=self.goal_node.x,
+                                                gy=self.goal_node.y,
+                                                gyaw=self.goal_node.theta,
+                                                maxc=max_c)
+            min_L = rs_path.L
+        
+        assert min_L >= 0
+        h_value_2 = min_L
         h_value_1 = h_value_1 / 100
-        # print(f"h_value_2: {h_value_2}  h_value_1: {h_value_1}")
-        h_value = max(h_value_1, h_value_2)
+        print(f"h_value_2: {h_value_2}  h_value_1: {h_value_1}")
+        h_value = min(h_value_1, h_value_2)
 
         return h_value
 
@@ -339,8 +357,8 @@ class hybrid_a_star:
         rs_path = None
         in_radius = False
         collision_p = None
-        distance = np.sqrt((current_node.x - self.goal_node.x)
-                           ** 2+(current_node.y-self.goal_node.y)**2)
+        distance = min(np.sqrt((current_node.x - goal_node.x)
+                           ** 2+(current_node.y-goal_node.y)**2) for goal_node in self.goal_node_list)
         if distance < self.config['flag_radius']:
             in_radius = True
             rs_path, collision, collision_p = self.try_rs_curve(current_node)
@@ -348,7 +366,6 @@ class hybrid_a_star:
         info = {'in_radius': in_radius,
                 'collision_position': collision_p}
 
-        # print("Finished: try_reach_goal")
         return rs_path, collision, info
 
     def try_rs_curve(self, current_node: Node):

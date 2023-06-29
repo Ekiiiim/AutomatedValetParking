@@ -53,7 +53,7 @@ class ploter:
         plt.gca().set_aspect('equal', adjustable = 'box')
         plt.gca().set_axisbelow(True)
         plt.draw()
-        print("Finished plotting")
+        print("Finished plotting obstacles")
 
     # @staticmethod
     # def plot_init():

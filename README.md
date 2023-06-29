@@ -72,7 +72,7 @@ Case 27 Collision | Case 30 Collision
 ![case27_png](pictures/Case27.png "Case 27 Collision") | ![case30_png](pictures/Case30.png "Case 30 Collision")
 The car isn't able to enter/exit the parking slot, since it's already considered as "collided" by only standing in the parking slot. | When the car tries to move in any direction, a collision occurs.
 
-This problem could be relieved to some extent by reducing the `dt` and `trajectory_dt` in `config.yaml`, so that more and closer nodes can be explored in the map. However, this would lead to a much larger amount of calculation.
+This problem could be relieved to some extent by reducing the `map_discrete_size`, `dt`, and `trajectory_dt` in `config.yaml`, so that more and denser nodes can be explored in the map. However, this would lead to a much larger amount of calculation.
 
 ### 3.4 Future Improvement
 The current program sometimes generates unnatural turbulences in the planned paths:
