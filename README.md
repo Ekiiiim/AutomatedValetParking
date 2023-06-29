@@ -55,15 +55,15 @@ By adjusting the heuristic calculation and cost configurations, I could further 
 
 Exploration Before | Exploration After
 :-----------------:|:-----------------:
-![case9_png](pictures/Case9_ORG.png "Exploration Before") | ![case9_png](pictures/Case9.png "Exploration After")
-![case9_gif](pictures/Case9_ORG.gif "Animation Before") | ![case9_gif](pictures/Case9.gif "Animation After")
+![case9_png](pictures/Case9_ORG.png "Exploration Before") | ![case9_png](pictures/Case9_legacy.png "Exploration After")
+![case9_gif](pictures/Case9_ORG.gif "Animation Before") | ![case9_gif](pictures/Case9_legacy.gif "Animation After")
 
 - Case 10
 
 Exploration Before | Exploration After
 :-----------------:|:-----------------:
-![case10_png](pictures/Case10_ORG.png "Exploration Before") | ![case10_png](pictures/Case10.png "Exploration After")
-![case10_gif](pictures/Case10_ORG.gif "Animation Before") | ![case10_gif](pictures/Case10.gif "Animation After")
+![case10_png](pictures/Case10_ORG.png "Exploration Before") | ![case10_png](pictures/Case10_legacy.png "Exploration After")
+![case10_gif](pictures/Case10_ORG.gif "Animation Before") | ![case10_gif](pictures/Case10_legacy.gif "Animation After")
 
 ### 3.3 Collision Check
 After experimenting, I found a reason why some exploration never ends. In some cases, the parking slot is too small, so the car may never be able to enter it since the car tries to avoid the obstacles in a grid map. The following are two examples of this situation
