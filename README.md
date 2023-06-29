@@ -45,7 +45,7 @@ I also added the exploration tracking feature. During the animation, now we can 
 The explored node is marked in red, and the small grey nodes are the nodes in the "open list" (neighbors waiting to be explored). 
 Case 30 Exploration Start |  Case 16 Exploration End
 :------------------------:|:----------------------:
-![case30_png](pictures/Case30_Explore.png "Case 30 Exploration Start") | ![case16_png](pictures/Case16_lagacy.png "Case 16 Exploration End")
+![case30_png](pictures/Case30_Explore.png "Case 30 Exploration Start") | ![case16_png](pictures/Case16_legacy.png "Case 16 Exploration End")
 
 This feature is helpful because it shows us how the program explores the map and where our resources are spent. E.g. In Case 16, although our program finally reaches the goal (following grey trace), it first explored in the wrong direction towards the top of the map.
 
