@@ -6,12 +6,13 @@
   map_discrete_size: 0.1 # m
   flag_radius: 15 # m (in this circle area, we use rs curve to connect goal pose)
   extended_num: 1 # extend point at the end of orignal path
-  goal_list_size: 5
+  goal_list_mode: True # replace goal with a list of goals
+  goal_list_size: 5 # how many steps away from goal to be added into goal list
 
 ## hybrid cost
   cost_gear: 1
   cost_heading_change: 0.5
-  cost_scale: 7
+  cost_scale: 6
 
 ## collision check
   safe_side_dis: 0.1 # m
@@ -23,7 +24,7 @@
   # expand distance for path optimization
   expand_dis: 0.8 #m
   # weight used for path optimization
-  smooth_cost: 8
+  smooth_cost: 5
   compact_cost: 3
   offset_cost: 0.8
   slack_cost: 1

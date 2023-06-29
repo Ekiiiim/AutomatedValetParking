@@ -42,7 +42,7 @@ class Node:
                  child_index: np.int32 = None,
                  is_in_openlist: bool = False,
                  is_in_closedlist: bool = False,
-                 is_forward: bool = True,
+                 is_forward: bool = None,
                  steering_angle: np.float64 = None) -> None:
 
         self.index = index
@@ -124,11 +124,17 @@ class hybrid_a_star:
             self.collision_checker = collision_check.distance_checker(
                 vehicle=self.vehicle, map=self.park_map, config=config)
         
-        # TODO: create goal_node_list (nodes that are N steps from goal_node)
-        self.open_list.put(self.goal_node)
-        self.goal_node_list = self.create_goal_node_list(config['goal_list_size'])
-        self.open_list.queue.clear()
-        assert self.open_list.empty()
+        # create goal_node_list (nodes that are N steps from goal_node)
+        self.goal_list_mode = self.config['goal_list_mode']
+        if self.goal_list_mode:
+            self.open_list.put(self.goal_node)
+            self.goal_node_list = self.create_goal_node_list(config['goal_list_size'])
+            self.open_list.queue.clear()
+            assert self.open_list.empty()
+        else:
+            self.goal_node_list = [self.goal_node]
+            assert len(self.goal_node_list) == 1
+            ploter.plot_obstacles(self.park_map)
 
         self.open_list.put(self.initial_node)
         self.initial_node.in_open = True
@@ -282,7 +288,7 @@ class hybrid_a_star:
         cost_gear = 0
         gear = node.forward
         # print(f"gear: {gear}; father_gear: {father_gear}")
-        if gear != father_gear:
+        if father_gear == None or gear != father_gear:
             cost_gear = self.config['cost_gear']
 
         cost_heading = abs(node.theta - father_theta)
@@ -319,7 +325,16 @@ class hybrid_a_star:
 
         max_c = 1 / self.vehicle.min_radius_turn
         min_L = -1
-        if not finding_goal_list:
+        if finding_goal_list or not self.goal_list_mode:
+            rs_path = rs_curve.calc_optimal_path(sx=current_node.x,
+                                                sy=current_node.y,
+                                                syaw=current_node.theta,
+                                                gx=self.goal_node.x,
+                                                gy=self.goal_node.y,
+                                                gyaw=self.goal_node.theta,
+                                                maxc=max_c)
+            min_L = rs_path.L
+        else:
             for goal_node in self.goal_node_list:
                 rs_path = rs_curve.calc_optimal_path(sx=current_node.x,
                                                     sy=current_node.y,
@@ -330,21 +345,12 @@ class hybrid_a_star:
                                                     maxc=max_c)
                 if min_L < 0 or rs_path.L < min_L:
                     min_L = rs_path.L
-        else:
-            rs_path = rs_curve.calc_optimal_path(sx=current_node.x,
-                                                sy=current_node.y,
-                                                syaw=current_node.theta,
-                                                gx=self.goal_node.x,
-                                                gy=self.goal_node.y,
-                                                gyaw=self.goal_node.theta,
-                                                maxc=max_c)
-            min_L = rs_path.L
         
         assert min_L >= 0
         h_value_2 = min_L
         h_value_1 = h_value_1 / 100
         print(f"h_value_2: {h_value_2}  h_value_1: {h_value_1}")
-        h_value = min(h_value_1, h_value_2)
+        h_value = max(h_value_1, h_value_2)
 
         return h_value
 
@@ -381,9 +387,9 @@ class hybrid_a_star:
             rs_path = rs_curve.calc_optimal_path(sx=current_node.x,
                                                 sy=current_node.y,
                                                 syaw=current_node.theta,
-                                                gx=self.goal_node.x,
-                                                gy=self.goal_node.y,
-                                                gyaw=self.goal_node.theta,
+                                                gx=goal_node.x,
+                                                gy=goal_node.y,
+                                                gyaw=goal_node.theta,
                                                 maxc=max_c)
 
             # collision check
