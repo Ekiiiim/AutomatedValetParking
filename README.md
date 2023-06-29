@@ -45,7 +45,7 @@ I also added the exploration tracking feature. During the animation, now we can 
 The explored node is marked in red, and the small grey nodes are the nodes in the "open list" (neighbors waiting to be explored). 
 Case 30 Exploration Start |  Case 16 Exploration End
 :------------------------:|:----------------------:
-![case30_png](pictures/Case30_Explore.png "Case 30 Exploration Start") | ![case16_png](pictures/Case16.png "Case 16 Exploration End")
+![case30_png](pictures/Case30_Explore.png "Case 30 Exploration Start") | ![case16_png](pictures/Case16_lagacy.png "Case 16 Exploration End")
 
 This feature is helpful because it shows us how the program explores the map and where our resources are spent. E.g. In Case 16, although our program finally reaches the goal (following grey trace), it first explored in the wrong direction towards the top of the map.
 
@@ -80,4 +80,4 @@ Case 14 | Case 18
 :-----------------:|:-----------------:
 ![case14_gif](pictures/Case14.gif "Case 14") | ![case18_gif](pictures/Case18.gif "Case 18")
 
-I am looking into the `path_plan` folder to try to find a solution.
+After some debugging, I found that the turbulence is mainly due to the wavy path produced in the path planning stage. But the "unnaturalness" mainly comes from the interpolation stage. Therefore, I would try to remove unnatural moves in the path by first investigating in `path_interpolation.py`. Then, to smooth the turbulences, I would look into the optimization files and maybe change the configurations for optimization. 

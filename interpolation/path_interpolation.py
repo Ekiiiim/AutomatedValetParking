@@ -79,9 +79,9 @@ class interpolation:
             while True:
                 preivous_t = t
                 t += dt
-                # if t > terminate_t:
-                #     print(f"preivous_t: {preivous_t} t: {t}")
-                #     t = terminate_t
+                if t > terminate_t:
+                    t = terminate_t
+                    print(f"preivous_t: {preivous_t} t: {t}")
                 t_x = np.linspace(preivous_t, t, 100)
                 y = []
                 for x_i in t_x:
