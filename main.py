@@ -18,6 +18,7 @@ from velocity_plan import velocity_planner
 from interpolation import path_interpolation
 from optimization import path_optimazition, ocp_optimization
 from config import read_config
+import time
 
 import os
 
@@ -102,6 +103,7 @@ def main(file, config):
             path=opti_path, path_i_info=path_i_info, v_a_func=v_acc_func, forward=forward, terminate_t=terminiate_time, path_arc_length=path_arc_length)
 
         # ocp problem solve
+        print(insert_path)
         ocp_traj, optimal_ti, optimal_dt = ocp_planner.solution(
             path=insert_path)
         optimal_time_info.append([optimal_ti, optimal_dt])

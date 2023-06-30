@@ -30,7 +30,7 @@ class path_opti:
         self.expand_dis = config['expand_dis']  # m
         self.config = config
 
-    def formate_matrix(self,
+    def format_matrix(self,
                        path: list) -> np.array:
         '''
         QP objective function form: 1/2 X^T P X + Q^T X
@@ -159,7 +159,7 @@ class path_opti:
         return slack_P_matrix, slack_Q_matrix, slack_A_matrix, slack_B_matrix, slack_G_matrix, slack_H_matrix
 
     def get_result(self, path) -> List[List]:
-        P, Q, A, B, G, H = self.formate_matrix(path)
+        P, Q, A, B, G, H = self.format_matrix(path)
         P = matrix(P)
         Q = matrix(Q)
         A = matrix(A)
@@ -660,13 +660,13 @@ class path_opti:
 
     def compute_curvature_H(self):
         '''
-        We consider the curvature limits, and the final formate is 
+        We consider the curvature limits, and the final format is 
         F'(X^r) \dot X <= F'(X^r) \dot X^r -F(X^r). We firstly use the 
         positions of continuous three points to get the equation with 
-        the curvature and then use Taylor expansion to formate it as the 
+        the curvature and then use Taylor expansion to format it as the 
         above fomulation.
         '''
-        # formate F(X^r), X^r is the orginal points
+        # format F(X^r), X^r is the orginal points
         points_n = len(self.original_path)
         max_curvature = 1 / self.vehicle.min_radius_turn
         # m, which equals to STEP_SIZE in rs_curve also equals to max_v * ddt (2.5m/s * 0.05s)
